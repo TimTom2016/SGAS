@@ -34,22 +34,3 @@ pub fn Home() -> impl IntoView {
 
     }
 }
-
-
-#[server]
-pub async fn get_pow() -> Result<String, ServerFnError> {
-	use leptos_captcha::spow::pow::Pow;
-
-	// I highly suggest, that you create a global static variable in your app
-	// as an indicator if you are in DEV / DEBUG mode, or something like that.
-	// You could pull it from the context, or where ever it makes sense for you.
-	// In debug mode, the speed of the verification in the UI is a low slower and
-	// you should just use the lowest difficulty of `10` during development.
-	const DEV_MODE: bool = true;
-
-	if DEV_MODE {
-		Ok(Pow::with_difficulty(10, 10)?.to_string())
-	} else {
-		Ok(Pow::new(10)?.to_string())
-	}
-}

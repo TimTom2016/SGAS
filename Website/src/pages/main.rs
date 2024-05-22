@@ -2,15 +2,27 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 use leptos_toaster::{Toaster, ToasterPosition};
+use leptos_use::{signal_throttled, use_preferred_dark};
 use crate::pages::home::Home;
+use crate::pages::login::Login;
+use crate::pages::signup::Signup;
 
 #[component]
 pub fn App() -> impl IntoView {
 	provide_meta_context();
 
+	let is_dark_preferred = signal_throttled(use_preferred_dark(), 60000.0);
+	create_effect(move |_| 
+	{
+		if is_dark_preferred.get() {
+			document().body().unwrap().set_attribute("data-bs-theme", "dark")
+		} else {
+			document().body().unwrap().set_attribute("data-bs-theme", "light")
+		}
+	});
 	view! {
         <Stylesheet href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
-        <Stylesheet id="leptos" href="/pkg/Leptos-Template.css"/>
+        <Stylesheet id="leptos" href="/pkg/Website.css"/>
         // <script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.6.0"></script>
         // <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.1"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
@@ -20,9 +32,9 @@ pub fn App() -> impl IntoView {
             <main class="vh-100 vw-100">
 				<Toaster position=ToasterPosition::BottomCenter>
 	                <Routes>
-						<Route path="/" view=Home>
-						</Route>
-
+						<Route path="/" view=Home/>
+						<Route path="login" view=Login/>
+						<Route path="signup" view=Signup/>
 	                </Routes>
 				</Toaster>
             </main>

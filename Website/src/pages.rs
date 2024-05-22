@@ -1,2 +1,4 @@
 pub mod main;
-mod home;
+pub mod home;
+pub mod login;
+pub mod signup;
