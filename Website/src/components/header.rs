@@ -16,12 +16,8 @@ pub fn HeaderPage() -> impl IntoView {
 pub fn Header() -> impl IntoView {
 	let action = create_server_action::<auth::Logout>();
 	return view!{
-		<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+		<nav class="navbar navbar-expand-md navbar-dark bg-dark d-flex flex-column">
 			<div class="container-fluid">
-				<a class="navbar-brand" href="#">PseyeScan</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
 				<div class="collapse navbar-collapse " id="navbarNav">
 					<ul class="navbar-nav me-auto navbar-nav-scroll">
 						<li class="nav-item">
