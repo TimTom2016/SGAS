@@ -22,7 +22,7 @@ def get_sensors():
 x = threading.Thread(target=get_sensors)
 
 
-num = 0
+num = 0 #variable for testing. start the thread only once
 try:
     if num == 0: #push by the webserver
         x.start()
