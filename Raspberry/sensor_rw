@@ -17,16 +17,17 @@ def get_sensors():
         #create a row in the sensorValue table and saves it
         dbwrite = db.sensorValue(sensor_id=sensor.id, value=value, timestamp=datetime.datetime.now())
         dbwrite.save()
-
+        
 #create a thread for actualizing the sensor values in the database
 x = threading.Thread(target=get_sensors)
 
 
 num = 0 #variable for testing. start the thread only once
 try:
-    if num == 0: #push by the webserver
-        x.start()
-        num += 1
+    while(True):
+        if num == 0: #push by the webserver
+            x.start()
+            num += 1
 
 except(KeyboardInterrupt, SystemExit):
     print("Interrupted by user. Shutting down...")
