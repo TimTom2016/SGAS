@@ -1,9 +1,11 @@
 use std::time::Duration;
+use itertools::Itertools;
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 use leptos_toaster::{Toast, ToastId, ToastOptions, Toasts, ToastVariant,Theme};
 use crate::components::header::Header;
+use crate::components::favorite::{Favorite,AddFavorite};
 #[component]
 pub fn Home() -> impl IntoView {
 	provide_meta_context();
@@ -30,10 +32,19 @@ pub fn Home() -> impl IntoView {
 			}) // options
 		);
 	};
+	let values = (0..100).collect_vec();
 	view! {
-		<div class="d-flex"> 
-		<Header/>
-		<button class="btn btn-primary align-self-start d-flex flex-column" on:click=create_toast/>
+		<div class="d-flex flex-column "> 
+			<Header/>
+			<h1 class="text-center">Willkommen zurück</h1>
+			<For
+			each=move || values.clone()
+			key=move |data| data.clone()
+			let:data>
+				<Favorite/>
+			</For>
+			<AddFavorite/>
+			<button class="btn btn-primary align-self-start d-flex" on:click=create_toast/>
 		</div>
     }
 }

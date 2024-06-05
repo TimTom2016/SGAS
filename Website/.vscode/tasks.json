@@ -12,6 +12,18 @@
 			],
 			"group": "build",
 			"label": "serve"
+		},
+		{
+			"type": "cargo",
+			"command": "leptos",
+			"args": [
+				"watch"
+			],
+			"problemMatcher": [
+				"$rustc"
+			],
+			"group": "build",
+			"label": "watch"
 		}
 	]
 }

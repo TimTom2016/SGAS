@@ -1,5 +1,6 @@
 use icondata::BiUserCircleRegular;
 use leptos::*;
+use leptos_use::use_preferred_dark;
 use thaw::*;
 use leptos_router::*;
 use crate::auth;
@@ -16,7 +17,7 @@ pub fn HeaderPage() -> impl IntoView {
 pub fn Header() -> impl IntoView {
 	let action = create_server_action::<auth::Logout>();
 	return view!{
-		<nav class="navbar navbar-expand-md navbar-dark bg-dark d-flex flex-column">
+		<nav class="navbar navbar-expand-md d-flex sticky-top bg-dark" data-bs-theme="dark">
 			<div class="container-fluid">
 				<div class="collapse navbar-collapse " id="navbarNav">
 					<ul class="navbar-nav me-auto navbar-nav-scroll">
@@ -24,14 +25,11 @@ pub fn Header() -> impl IntoView {
 							<a class="nav-link active" aria-current="page" href="#">Home</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="#">Features</a>
+							<a class="nav-link" href="#">Database</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="#">Pricing</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link disabled">Disabled</a>
-						</li>
+						// <li class="nav-item">
+						// 	<a class="nav-link disabled">Disabled</a>
+						// </li>
 					</ul>
 					<div class="d-flex">
 						<div class="dropdown">

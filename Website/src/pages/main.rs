@@ -11,7 +11,7 @@ use crate::pages::signup::Signup;
 pub fn App() -> impl IntoView {
 	provide_meta_context();
 
-	let is_dark_preferred = signal_throttled(use_preferred_dark(), 60000.0);
+	let is_dark_preferred = signal_throttled(use_preferred_dark(), 1000.0);
 	create_effect(move |_| 
 	{
 		if is_dark_preferred.get() {
@@ -29,7 +29,7 @@ pub fn App() -> impl IntoView {
         // <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
         // <script src="https://cdn.jsdelivr.net/npm/echarts-gl@2.0.9/dist/echarts-gl.min.js"></script>
         <Router>
-            <main class="vh-100 vw-100 d-flex">
+            <main class="min-vh-100 min-vw-100">
 				<Toaster position=ToasterPosition::BottomCenter>
 	                <Routes>
 						<Route path="/" view=Home/>
