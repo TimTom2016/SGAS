@@ -9,35 +9,13 @@ database = MySQLDatabase('sgas',
                                     host='127.0.0.1'
                                     )
 
-class User(Model):
-    #ask tim about this
-    
-    class Meta:
-        database = database
-
-class device(Model):
-    deviceID = IntegerField()
-    name = CharField()
-    ipAddr = CharField()
-
-    class Meta:
-        database = database
-
-#m to n connection between user and device
-class can_see(Model):
-    userID = ForeignKeyField(User, backref='can_see')
-    deviceID = ForeignKeyField(device, backref='can_see')
-
-    class Meta:
-        database = database
-
 
 class sensor(Model):
-    sensorID = IntegerField()
+    id = AutoField(primary_key=True)
     name = CharField()
-    type = CharField()
-    pin = CharField()
-    address = CharField()
+    type = CharField(default= 'GPIO')
+    pin = CharField(default= None)
+    address = CharField(default= None)
     
     class Meta:
         database = database
