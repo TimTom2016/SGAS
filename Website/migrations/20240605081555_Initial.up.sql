@@ -1,13 +1,13 @@
 -- Add up migration script here
 create table device(
-    deviceId INT PRIMARY KEY,
+    deviceId INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(32) NOT NULL,
     macAddr VARCHAR(37)
 );
 
 -- table
 create table sensor(
-    sensorId INT PRIMARY KEY,
+    sensorId INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(32) NOT NULL,
     type VARCHAR(32) NOT NULL,
     pin INT,
