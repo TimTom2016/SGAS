@@ -1,0 +1,21 @@
+import grpc
+import server_pb2
+import server_pb2_grpc
+
+def run():
+    # Open a gRPC channel
+    with grpc.insecure_channel('localhost:50051') as channel:
+
+        # Create a stub (client)
+        stub = server_pb2_grpc.sgas_serviceStub(channel)
+
+        # Create a new sensor request
+        response = stub.new_sensor_request(server_pb2.add_new_sensor_message(name='Sensor1', type='Type1', pin=1, addr='Addr1'))
+        print("New sensor request response received: ") # + response.message) need to add response.message in server.proto
+
+        # Delete a sensor request
+        response = stub.delete_sensor_request(server_pb2.delete_sensor_message(sensorId=1))
+        print("Delete sensor request response received: ") # + response.message) need to add response.message in server.proto
+
+
+run()
