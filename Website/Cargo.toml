@@ -22,7 +22,7 @@ leptos-struct-table = {path="/home/tim/RustroverProjects/leptos-struct-table" , 
 leptos_toaster = {path = "/home/tim/RustroverProjects/leptos_toaster",features = ["builtin_toast"]}
 
 thaw = "0.3.0"
-charming = { version="0.3.1", features = ["wasm"] }
+charming = { path="/home/tim/RustroverProjects/charming/charming", features = ["wasm"] }
 
 
 
