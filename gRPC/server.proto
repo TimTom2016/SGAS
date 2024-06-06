@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+service sgas_service{
+  rpc new_sensor_request(add_new_sensor_message) returns (done_message) {}
+  rpc delete_sensor_request(delete_sensor_message) returns (done_message) {}
+}
+
+message add_new_sensor_message{
+  string name = 1;
+  string type = 2;
+  int32 pin = 3;
+  string addr = 4;
+}
+
+message done_message{
+}
+
+message delete_sensor_message{
+  int32 sensorId = 1;
+}
+
+
