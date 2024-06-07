@@ -20,16 +20,12 @@ class sgas_serviceServicer(server_pb2_grpc.sgas_serviceServicer):
         _type = request.type
         _pin = request.pin
         _addr = request.addr
-        print(_name, _type, _pin, _addr)
-        # temp = db.Sensor(name=_name, type=_type, pin=_pin, addr=_addr)
-        # temp.save()
+        #call function to create new sensor
         return server_pb2.done_message()
 
     def delete_sensor_request(self, request, context):
         _sensorId = request.sensorId
-        print(_sensorId)
-        # sensor = db.Sensor.get(db.Sensor.sensorId == _sensorId)
-        # sensor.delete_instance(recursive=True)
+        #call function to delete sensor
         return server_pb2.done_message()
 
 def serve():
@@ -39,6 +35,7 @@ def serve():
     server.start()
     return server
 
+#only runs if it is the main file (not imported)
 if __name__ == "__main__":
     logging.basicConfig()
     server = serve()
