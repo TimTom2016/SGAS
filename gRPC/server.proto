@@ -1,4 +1,5 @@
 syntax = "proto3";
+package sgas;
 
 service sgas_service{
   rpc new_sensor_request(add_new_sensor_message) returns (done_message) {}

@@ -40,12 +40,12 @@ class sgas_serviceStub(object):
             channel: A grpc.Channel.
         """
         self.new_sensor_request = channel.unary_unary(
-                '/sgas_service/new_sensor_request',
+                '/sgas.sgas_service/new_sensor_request',
                 request_serializer=server__pb2.add_new_sensor_message.SerializeToString,
                 response_deserializer=server__pb2.done_message.FromString,
                 _registered_method=True)
         self.delete_sensor_request = channel.unary_unary(
-                '/sgas_service/delete_sensor_request',
+                '/sgas.sgas_service/delete_sensor_request',
                 request_serializer=server__pb2.delete_sensor_message.SerializeToString,
                 response_deserializer=server__pb2.done_message.FromString,
                 _registered_method=True)
@@ -81,9 +81,9 @@ def add_sgas_serviceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'sgas_service', rpc_method_handlers)
+            'sgas.sgas_service', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('sgas_service', rpc_method_handlers)
+    server.add_registered_method_handlers('sgas.sgas_service', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
@@ -104,7 +104,7 @@ class sgas_service(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sgas_service/new_sensor_request',
+            '/sgas.sgas_service/new_sensor_request',
             server__pb2.add_new_sensor_message.SerializeToString,
             server__pb2.done_message.FromString,
             options,
@@ -131,7 +131,7 @@ class sgas_service(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sgas_service/delete_sensor_request',
+            '/sgas.sgas_service/delete_sensor_request',
             server__pb2.delete_sensor_message.SerializeToString,
             server__pb2.done_message.FromString,
             options,
