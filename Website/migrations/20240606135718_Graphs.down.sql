@@ -1,2 +1,3 @@
 -- Add down migration script here
-DROP TABLE graph_definition;
+DROP TABLE favorites;
+DROP TABLE graph; 

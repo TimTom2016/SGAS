@@ -23,8 +23,8 @@ leptos_toaster = {path = "/home/tim/RustroverProjects/leptos_toaster",features =
 
 thaw = "0.3.0"
 charming = { path="/home/tim/RustroverProjects/charming/charming", features = ["wasm"] }
-
-
+tonic = {version = "0.11.0",optional = true}
+prost = {version="0.12",optional = true}
 
 log = "0.4.21"
 simple_logger = "5.0.0"
@@ -44,7 +44,7 @@ chrono = { version = "0.4.38", features = ["serde","wasmbind"] }
 fast_qr = { version = "0.12.3", features = ["svg"] }
 local-ip-address = { version = "0.6.1", optional = true }
 icondata = "0.3.0"
-itertools =  "0.12.1"
+itertools =  "0.13.0"
 rand = "0.8.5"
 dotenvy = {version = "0.15.7", optional = true}
 
@@ -70,6 +70,8 @@ ssr = [
     "dep:axum_session_sqlx",
     "dep:tracing",
     "dep:uuid",
+    "dep:prost",
+    "dep:tonic",
     "dep:local-ip-address",
     "leptos/ssr",
     "leptos_meta/ssr",
@@ -79,6 +81,9 @@ ssr = [
     "thaw/ssr",
 ]
 
+
+[build-dependencies]
+tonic-build = "0.11"
 
 # Defines a size-optimized profile for the WASM bundle in release mode
 [profile.wasm-release]
@@ -90,7 +95,7 @@ panic = "abort"
 
 [package.metadata.leptos]
 # The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name
-output-name = "Website"
+output-name = "sgas"
 
 # The site root folder is where cargo-leptos generate all output. WARNING: all content of this folder will be erased on a rebuild. Use it in your server setup.
 site-root = "target/site"

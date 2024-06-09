@@ -22,14 +22,14 @@ pub fn App() -> impl IntoView {
 	});
 	view! {
         <Stylesheet href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
-        <Stylesheet id="leptos" href="/pkg/Website.css"/>
+        <Stylesheet id="leptos" href="/pkg/sgas.css"/>
         // <script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.6.0"></script>
         // <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.1"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/echarts-gl@2.0.9/dist/echarts-gl.min.js"></script>
         <Router>
-            <main class="min-vh-100 min-vw-100">
+            <main class="min-vh-100">
 				<Toaster position=ToasterPosition::BottomCenter>
 	                <Routes>
 						<Route path="/" view=Home/>

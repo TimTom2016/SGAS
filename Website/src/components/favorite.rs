@@ -1,4 +1,6 @@
 use charming::{component::{Axis, Title}, element::AxisType, series::Line, Chart, WasmRenderer};
+use itertools::Itertools;
+use rand::Rng;
 use std::{ops::Deref, time::Duration};
 use html::Div;
 use icondata::BiPlusCircleRegular;
@@ -10,6 +12,7 @@ pub fn Favorite() -> impl IntoView {
     let node_ref = create_node_ref::<Div>();
     let render_chart = create_action(move |_ : &()| {
         async move {
+            let mut rng = rand::thread_rng();
             let chart = Chart::new()
                 .title(Title::new().text("Demo: Leptos + Charming"))
                 .x_axis(
@@ -18,9 +21,9 @@ pub fn Favorite() -> impl IntoView {
                         .data(vec!["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]),
                 )
                 .y_axis(Axis::new().type_(AxisType::Value))
-                .series(Line::new().data(vec![150, 230, 224, 218, 135, 147, 260]));
+                .series(Line::new().data((0..7).map(|x| rng.gen_range(0..500 )).collect_vec()));
 
-            let renderer = WasmRenderer::new(600, 400);
+            let renderer = WasmRenderer::new(300, 300);
             renderer.render_element(node_ref.get().unwrap().deref().clone().into(),&chart).unwrap();
             }
     });
@@ -30,17 +33,13 @@ pub fn Favorite() -> impl IntoView {
 		}, Duration::from_secs(1));
     });
     view!{
-        <div class="d-flex flex-column min-vh-70 min-vw-70 ">
-            <div class="d-flex flex-row ">
-                <hr class="flex-fill align-self-center"/>
+        <div class="shadow card scroll-animation">
+            <div class="d-flex flex-column card-body">
                 <button class="m-2 btn btn-primary">Edit</button>
-                <hr class="flex-fill align-self-center"/>
-            </div>
-            <div class="d-flex align-items-center rounded justify-content-center flex-grow-1">
-                <div _ref=node_ref></div>
-            </div>
-            <div class="mb-5">
-                <hr class=""/>
+                <div class="d-flex align-items-center rounded justify-content-center flex-grow-1">
+                    <div _ref=node_ref></div>
+                </div>
+        
             </div>
         </div>
     }

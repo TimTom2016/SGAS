@@ -1,0 +1,43 @@
+@keyframes appear {
+    from {
+        opacity: 0;
+        transform: scale(0);
+    }
+    to {
+        opacity: 100;
+        transform: scale(1);
+    }
+}
+
+@keyframes appear-disappear {
+    0%, 100% {
+        transform: scale(0);
+    }
+    20%, 80% {
+        
+        transform: scale(1);
+    }
+}
+
+.scroll-in {
+    animation: appear linear;
+    animation-timeline: view();
+    animation-range: entry 0% cover 50%;
+}
+.scroll-out {
+    animation: appear linear;
+    animation-direction: reverse;
+    animation-timeline: view();
+    animation-range: exit 0% cover 50%;
+
+}
+.scroll-animation {
+    animation: appear-disappear linear;
+    animation-timeline: view();
+    animation-range-start: entry 0% cover 25%;
+    animation-range-end: exit 100% cover 25%;
+}
+main {
+    width: 100%;
+    min-height: 100%;
+}
