@@ -9,8 +9,8 @@ service sgas_service{
 message add_new_sensor_message{
   string name = 1;
   string type = 2;
-  int32 pin = 3;
-  string addr = 4;
+  optional int32 pin = 3;
+  optional string addr = 4;
 }
 
 message done_message{
