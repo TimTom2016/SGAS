@@ -37,9 +37,14 @@ def serve():
 
 #only runs if it is the main file (not imported)
 if __name__ == "__main__":
+    import time
     logging.basicConfig()
     server = serve()
     print("Server started")
     print("Server listening on port 50051")
     threading.Thread(target=server.wait_for_termination).start()
     print("Continuing with the rest of the Python file...")
+    while True:
+        time.sleep(1)
+        print("Server still running...")
+        pass
