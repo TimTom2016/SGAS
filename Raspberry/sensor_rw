@@ -10,8 +10,8 @@ threading.Thread(target=server.wait_for_termination).start()
 from concurrent import futures
 import grpc
 import logging
-from gRPC import server_pb2_grpc
-from gRPC import server_pb2
+import server_pb2_grpc
+import server_pb2
 import threading
 
 class sgas_serviceServicer(server_pb2_grpc.sgas_serviceServicer):
@@ -20,7 +20,7 @@ class sgas_serviceServicer(server_pb2_grpc.sgas_serviceServicer):
         _type = request.type
         _pin = request.pin
         _addr = request.addr
-        GPIOsensor(_name, _pin, _type, _addr)
+        GPIOsensor(name=_name, pin=_pin, sensorId=None, type=_type, addr=_addr)
         return server_pb2.done_message()
 
     def delete_sensor_request(self, request, context):
@@ -34,37 +34,12 @@ def serve():
     server.add_insecure_port('[::]:50051')
     server.start()
     return server
-"""
-#only runs if it is the main file (not imported) -> testing purposes
-if __name__ == "__main__":
-    import time
-    logging.basicConfig()
-    server = serve()
-    print("Server started")
-    print("Server listening on port 50051")
-    threading.Thread(target=server.wait_for_termination).start()
-    print("Continuing with the rest of the Python file...")
-    while True:
-        time.sleep(1)
-        print("Server still running...")
-        pass
-"""
+
 logging.basicConfig()
 server = serve()
 threading.Thread(target=server.wait_for_termination).start()
 
-
-
-
-"""
-
-NICO + Dominik 06.2024 
-
-"""
-
-
-from Raspberry import database_orm as db
-import peewee as pw
+import database_orm as db
 import datetime
 import time
 
@@ -72,26 +47,31 @@ import time
 import RPi.GPIO as GPIO
 
 sensorList = []
+init_state = True
+
+def add_to_db(_sensorId, _name, _type, _pin, _addr):
+    if not init_state:
+        temp = db.sensor(name=_name, type=_type, pin=_pin, addr=_addr)
+        temp.save()
+        return temp.sensorId
+    else:
+        return _sensorId
+    
 class GPIOsensor():
-    def __init__(self, name, pin, type='GPIO', addr=''):
+    def __init__(self, name, pin, sensorId=None, type='GPIO', addr=''):
         self.name = name
         self.pin = pin
         self.type = type
         self.addr = addr
-
         #append the sensor to the list of sensors (adds instance)
         sensorList.append(self)
         #save the sensor to the database
-        temp = db.Sensor(name=self.name, type='GPIO', pin=self.pin)
-        temp.save()
-        self.sensorId = temp.sensorId
-
+        self.sensorId = add_to_db(sensorId, self.name, self.type, self.pin, self.addr)
         #specific setup
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.pin, GPIO.IN)
+        GPIO.setup(int(self.pin), GPIO.IN)
     
     def getinf(self):
-        return (self.sensorId, GPIO.input(self.pin), datetime.datetime.now()) 
+        return (self.sensorId, GPIO.input(int(self.pin)), datetime.datetime.now()) 
 
 def update_sensors_to_db():
     for item in sensorList:
@@ -99,21 +79,25 @@ def update_sensors_to_db():
         info = item.getinf()
         dbwrite = db.sensorValue(sensorId=info[0], value=info[1], time_stamp=info[2])
         dbwrite.save()
+        
 
 try:
+    GPIO.setmode(GPIO.BCM)
     # Connect to the database
     db.database.connect()
     # Retrieve the sensor values from the database
-    initialSensors = db.sensor.select().order_by(db.sensor.id)
+    initialSensors = db.sensor.select().order_by(db.sensor.sensorId)
     # Close the database connection
     for sensor in initialSensors:
         # Create a new sensor object
-        GPIOsensor(sensor.name, sensor.pin)
+        GPIOsensor(name=sensor.name, pin=sensor.pin, sensorId=sensor.sensorId, type=sensor.type, addr=sensor.addr)
         # Add the sensor object to the list of sensors
+
+    init_state = False
 
     while(True):
         update_sensors_to_db()
-        time.sleep(100)
+        time.sleep(1)
 
 except(KeyboardInterrupt):
     print("Interrupted by user. Shutting down...")
