@@ -9,9 +9,8 @@ database = MySQLDatabase('sgas',
                                     host='127.0.0.1'
                                     )
 
-
 class sensor(Model):
-    id = AutoField(primary_key=True)
+    sensorId = AutoField(primary_key=True)
     name = CharField()
     type = CharField(default= 'GPIO')
     pin = CharField(default= None)
@@ -21,7 +20,7 @@ class sensor(Model):
         database = database
 
 class sensorValue(Model):
-    deviceID = ForeignKeyField(sensor, backref='values')
+    sensorId = ForeignKeyField(sensor, backref='values')
     value = FloatField()
     timestamp = DateTimeField(default=datetime.datetime.now)
 
