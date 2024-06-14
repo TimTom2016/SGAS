@@ -1,0 +1,53 @@
+sudo apt update
+sudo apt upgrade
+sudo apt install mariadb-server
+sudo mysql_secure_installation
+sudo mysql -u root -p
+CREATE DATABASE sgas;
+Use sgas;
+-- Create sensor table
+CREATE TABLE sensor(
+    sensorId INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(32) NOT NULL,
+    type VARCHAR(32) NOT NULL,
+    pin INT,
+    addr VARCHAR(32)
+);
+
+-- Create sensorValue table
+CREATE TABLE sensorValue (
+    time_stamp TIMESTAMP NOT NULL,
+    sensorId INT NOT NULL,
+    value FLOAT NOT NULL,
+    PRIMARY KEY (sensorId, time_stamp),
+    FOREIGN KEY (sensorId) REFERENCES sensor(sensorId)
+);
+
+-- Create canSee table
+CREATE TABLE canSee(
+    sensorId INT NOT NULL,
+    id INT NOT NULL,
+    FOREIGN KEY (sensorId) REFERENCES sensor(sensorId),
+    FOREIGN KEY (id) REFERENCES users(id),
+    PRIMARY KEY (sensorId, id)
+);
+
+-- Insert sample data into sensor table
+INSERT INTO sensor (name, type, pin, addr) VALUES
+('Temperature Sensor', 'GPIO', 1, 'NULL'),
+('Humidity Sensor', 'GPIO', 2, 'NULL'),
+('Pressure Sensor', 'GPIO', 3, 'NULL'),
+('Light Sensor', 'GPIO', 4, 'NULL'),
+('Proximity Sensor', 'GPIO', 5, 'NULL');
+
+-- Insert sample data into sensorValue table
+INSERT INTO sensorValue (time_stamp, sensorId, value) VALUES
+('2024-06-14 12:00:00', 1, 23.5),
+('2024-06-14 12:05:00', 2, 45.2),
+('2024-06-14 12:10:00', 3, 1013.7),
+('2024-06-14 12:15:00', 4, 350.0),
+('2024-06-14 12:20:00', 5, 0.9);
+
+
+CREATE USER 'python'@'localhost' IDENTIFIED BY 'python';
+GRANT ALL PRIVILEGES ON sgas.sensorValues.* TO 'python'@'localhost';
