@@ -1,18 +1,12 @@
 use serde::{Deserialize, Serialize};
-use sqlx::{prelude::Type, FromRow};
+use sqlx::FromRow;
 
-#[derive(Type,Clone,Serialize,Deserialize,Debug,PartialEq,Eq)]
-#[repr(i32)]
-pub enum GraphTypes {
-    BasicLine,
-    SmoothedLine,
-    BasicArea,
-    BasicBar,
-}
+use crate::shared::graph_types::GraphTypes;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize,FromRow)]
 pub struct Graph {
 	pub id: Option<i64>,
+    pub name: String,
     pub sensor_id: i64,
     pub graph_type: GraphTypes, 
 }

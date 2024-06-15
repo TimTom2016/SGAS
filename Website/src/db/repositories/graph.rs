@@ -23,14 +23,14 @@ impl BaseRepository for GraphRepository
 		Ok(user)
 	}
 	async fn create(&self, data: Self::Item) -> Result<u64,Self::Error> {
-		let id = sqlx::query!("INSERT INTO graph (sensor_id, graph_type) VALUES (?, ?)",data.sensor_id,data.graph_type)
+		let id = sqlx::query!("INSERT INTO graph (sensor_id,name, graph_type) VALUES (?, ? ,?)",data.sensor_id,data.name,data.graph_type)
 			.execute(&self.pool)
 			.await?
 			.last_insert_id();
 		return Ok(id);
 	}
 	async fn update(&self, id: u64, data: Self::Item) -> Result<u64,Self::Error> {
-		let id = sqlx::query!("UPDATE graph SET sensor_id=? ,graph_type=? WHERE id=?",data.sensor_id,data.graph_type,id)
+		let id = sqlx::query!("UPDATE graph SET sensor_id=?, name=?,graph_type=? WHERE id=?",data.sensor_id,data.name,data.graph_type,id)
 			.execute(&self.pool)
 			.await?
 			.last_insert_id();

@@ -1,9 +1,12 @@
 -- Add up migration script here
 CREATE TABLE graph(
-    id INT NOT NULL PRIMARY KEY,
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
     sensor_id INT NOT NULL,
     graph_type INT NOT NULL,
-    FOREIGN KEY(sensor_id) REFERENCES sensor(sensorId)
+    user_id INT NOT NULL,
+    FOREIGN KEY(sensor_id) REFERENCES sensor(sensorId),
+    FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
 CREATE TABLE favorites(

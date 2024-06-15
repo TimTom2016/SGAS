@@ -1,43 +1,64 @@
-use charming::{component::{Axis, Title}, element::AxisType, series::Line, Chart, WasmRenderer};
-use itertools::Itertools;
-use rand::Rng;
-use std::{ops::Deref, time::Duration};
-use html::Div;
-use icondata::BiPlusCircleRegular;
+use std::time::Duration;
+
+use icondata::{BiPlusCircleRegular,BiEditAltRegular};
 use leptos::*;
+use num_traits::FromPrimitive;
+use serde::{Deserialize, Serialize};
 use thaw::*;
+use crate::{auth::get_user, components::{graphs::*,create_favorite::{CreateFavorite},edit_favorite}, shared::graph_types::GraphTypes};
 
 #[component]
-pub fn Favorite() -> impl IntoView {
-    let node_ref = create_node_ref::<Div>();
-    let render_chart = create_action(move |_ : &()| {
-        async move {
-            let mut rng = rand::thread_rng();
-            let chart = Chart::new()
-                .title(Title::new().text("Demo: Leptos + Charming"))
-                .x_axis(
-                    Axis::new()
-                        .type_(AxisType::Category)
-                        .data(vec!["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]),
-                )
-                .y_axis(Axis::new().type_(AxisType::Value))
-                .series(Line::new().data((0..7).map(|x| rng.gen_range(0..500 )).collect_vec()));
-
-            let renderer = WasmRenderer::new(300, 300);
-            renderer.render_element(node_ref.get().unwrap().deref().clone().into(),&chart).unwrap();
-            }
+pub fn Favorite(
+    #[prop(into)]
+    id: MaybeSignal<u32>,
+    #[prop(into)]
+    x: MaybeSignal<u32>,
+    #[prop(into)]
+    y: MaybeSignal<u32>,
+    reload: StoredValue<impl Fn() + 'static>
+) -> impl IntoView {
+    let id = create_rw_signal(id.get());
+    let definition = create_resource(id, |id| async move {
+        get_data(id).await.unwrap()
     });
+    
     create_effect(move |_| {
-        set_timeout(move || {
-			render_chart.dispatch(());
-		}, Duration::from_secs(1));
+        set_interval(move || {
+            definition.refetch()
+        }, Duration::from_secs(1))
     });
     view!{
         <div class="shadow card scroll-animation">
             <div class="d-flex flex-column card-body">
-                <button class="m-2 btn btn-primary">Edit</button>
-                <div class="d-flex align-items-center rounded justify-content-center flex-grow-1">
-                    <div _ref=node_ref></div>
+                <EditFavorite x=x.get() y=y.get() reload/>
+                
+                <div class="d-flex align-items-center rounded justify-content-center flex-grow-1 flex-column">
+                    <Transition>
+                    {move || definition.get().map(|definition| view!{
+                        <p class="text-center">{definition.title}</p>
+                        <Graph r#type=definition.graph_type data=definition.data/>
+                    })
+                    }
+                    </Transition>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+#[component]
+pub fn EmptyFavorite(
+    #[prop(into)]
+    x: MaybeSignal<u32>,
+    #[prop(into)]
+    y: MaybeSignal<u32>,
+    reload: StoredValue<impl Fn() + 'static>
+) -> impl IntoView {
+    view!{
+        <div class="shadow card scroll-animation">
+            <div class="d-flex flex-column card-body">
+                <div class="d-flex align-items-center rounded justify-content-center flex-grow-1" style:width="300px" style:height="300px">
+                    <AddFavorite x= x.get() y=y.get() reload/>
                 </div>
         
             </div>
@@ -46,12 +67,78 @@ pub fn Favorite() -> impl IntoView {
 }
 
 #[component]
-pub fn AddFavorite() -> impl IntoView {
+pub fn EditFavorite(
+    x: u32,
+    y: u32,
+    reload: StoredValue<impl Fn() + 'static>
+) -> impl IntoView {
+    let show = create_rw_signal(false);
     view!{
         <div class="d-flex justify-content-center">
-            <button class="btn btn-primary">
+            <button class="btn btn-primary" on:click=move |_| show.set(true)>
+                <Icon icon=BiEditAltRegular width="1em" height="1em"/>
+            </button> 
+        </div>
+        <Modal show>
+            <div class="d-flex justify-content-center align-items-center">
+                <edit_favorite::EditFavorite x y reload/>
+            </div>
+        </Modal>
+    }
+}
+
+
+#[component]
+pub fn AddFavorite(
+    x: u32,
+    y: u32,
+    reload: StoredValue<impl Fn() + 'static>
+) -> impl IntoView {
+    let show = create_rw_signal(false);
+    view!{
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-primary" on:click=move |_| show.set(true)>
                 <Icon icon=BiPlusCircleRegular width="2em" height="2em"/>
             </button> 
         </div>
+        <Modal show>
+            <div class="d-flex justify-content-center align-items-center">
+                <CreateFavorite x y reload/>
+            </div>
+        </Modal>
     }
+}
+
+#[derive(Serialize,Deserialize,Clone)]
+pub struct GraphDefinition {
+    pub title: String,
+    pub graph_type: GraphTypes,
+    pub data: Vec<GraphData>,
+}
+
+#[server]
+pub async fn get_data(id: u32) -> Result<GraphDefinition,ServerFnError::<String>> {
+    use crate::shared::app_state::AppState;
+	use crate::auth::get_user;
+    let user = get_user().await.unwrap();
+    let db: crate::db::database::Database = expect_context::<AppState>().db;
+	let graph = sqlx::query!("SELECT * FROM graph WHERE id=?",id).fetch_one(db.get_pool()).await.unwrap();
+    let can_see = sqlx::query!("SELECT * FROM canSee WHERE id=?",user.unwrap().id).fetch_optional(db.get_pool()).await.unwrap();
+    if can_see.is_none() {
+        return Err::<GraphDefinition,ServerFnError::<String>>(ServerFnError::ServerError::<String>("Not Authenticated".to_string()));
+    }
+    let mut values = sqlx::query!("SELECT * FROM sensorValue WHERE sensorId_id=? ORDER BY time_stamp DESC LIMIT 100",graph.sensor_id).fetch_all(db.get_pool()).await.unwrap();
+    values.reverse();
+    let mut return_values = vec![];
+    for value in values {
+        return_values.push(GraphData {
+            x: value.time_stamp.with_timezone(&chrono::Local),
+            y: value.value
+        });
+    }
+    return Ok(GraphDefinition{
+        title: graph.name,
+        graph_type: GraphTypes::from_i32(graph.graph_type).unwrap(),
+        data: return_values,
+    });
 }

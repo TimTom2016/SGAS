@@ -1,4 +1,6 @@
 #![feature(associated_type_defaults)]
+#![feature(async_closure)]
+#![feature(fn_traits)]
 mod shared;
 mod pages;
 mod components;

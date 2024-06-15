@@ -2,23 +2,27 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 use leptos_toaster::{Toaster, ToasterPosition};
-use leptos_use::{signal_throttled, use_preferred_dark};
+use leptos_use::{signal_throttled, use_css_var, use_preferred_dark};
 use crate::pages::home::Home;
 use crate::pages::login::Login;
 use crate::pages::signup::Signup;
-
+use crate::pages::database::Database;
+use thaw::*;
 #[component]
 pub fn App() -> impl IntoView {
 	provide_meta_context();
-
 	let is_dark_preferred = signal_throttled(use_preferred_dark(), 1000.0);
+	let theme= create_rw_signal(Theme::dark());
 	create_effect(move |_| 
 	{
 		if is_dark_preferred.get() {
-			document().body().unwrap().set_attribute("data-bs-theme", "dark")
+			theme.set(Theme::dark());
+			document().body().unwrap().set_attribute("data-bs-theme", "dark");
 		} else {
-			document().body().unwrap().set_attribute("data-bs-theme", "light")
-		}
+			theme.set(Theme::light());
+			document().body().unwrap().set_attribute("data-bs-theme", "light");
+		};
+
 	});
 	view! {
         <Stylesheet href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
@@ -29,15 +33,18 @@ pub fn App() -> impl IntoView {
         <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/echarts-gl@2.0.9/dist/echarts-gl.min.js"></script>
         <Router>
-            <main class="min-vh-100">
-				<Toaster position=ToasterPosition::BottomCenter>
-	                <Routes>
-						<Route path="/" view=Home/>
-						<Route path="login" view=Login/>
-						<Route path="signup" view=Signup/>
-	                </Routes>
-				</Toaster>
-            </main>
+			<ThemeProvider theme=theme>
+				<main class="min-vh-100">
+					//<Toaster position=ToasterPosition::BottomCenter>
+						<Routes>
+							<Route path="/" view=Home/>
+							<Route path="database" view=Database/>
+							<Route path="login" view=Login/>
+							<Route path="signup" view=Signup/>
+						</Routes>
+					//</Toaster>
+				</main>
+			</ThemeProvider>
         </Router>
     }
 }

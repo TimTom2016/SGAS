@@ -26,7 +26,7 @@ impl BaseRepository for FavoriteRepository
 		return Ok(id);
 	}
 	async fn update(&self, id: u64, data: Self::Item) -> Result<u64,Self::Error> {
-		todo!("Does not exist")
+		todo!("Not possible");
 	}
 	async fn delete(&self, id: u64) -> Result<(),Self::Error>{
         todo!("Not possible");
@@ -34,10 +34,11 @@ impl BaseRepository for FavoriteRepository
 }
 
 impl FavoriteRepository {
-    // async fn get_all_by_user_id(&self, id: i64) -> Vec<Favorite> {
-    //     let results = sqlx::query_as("SELECT FROM favorites WHERE user_id=?")
-    //         .bind(id)
-    //         .fetch_all(&self.pool)
+    async fn get_all_by_user_id(&self, id: i64) -> Result<Vec<Favorite>,sqlx::Error> {
+        let results = sqlx::query_as("SELECT * FROM favorites WHERE user_id=?")
+            .bind(id)
+            .fetch_all(&self.pool).await?;
+		Ok(results)
     
-    // }
+    }
 }
