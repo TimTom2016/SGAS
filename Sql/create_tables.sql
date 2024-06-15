@@ -9,7 +9,7 @@ create table sensor(
 -- table
 CREATE TABLE sensorValue (
     time_stamp TIMESTAMP NOT NULL,
-    sensorId INT NOT NULL,
+    sensorId_id INT NOT NULL,
     value FLOAT NOT NULL,
     PRIMARY KEY (sensorId, time_stamp),
     FOREIGN KEY (sensorId) REFERENCES sensor(sensorId)
