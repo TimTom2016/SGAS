@@ -4,26 +4,26 @@ import datetime
 
 
 database = MySQLDatabase('sgas',
-                                    user='root',
-                                    password='',
-                                    host='127.0.0.1'
+                                    user='python',
+                                    password='python',
+                                    host='localhost',
                                     )
 
 
 class sensor(Model):
-    id = AutoField(primary_key=True)
+    sensorID = AutoField(primary_key=True)
     name = CharField()
     type = CharField(default= 'GPIO')
     pin = CharField(default= None)
-    address = CharField(default= None)
+    addr = CharField(default= None)
     
     class Meta:
         database = database
 
 class sensorValue(Model):
-    deviceID = ForeignKeyField(sensor, backref='values')
+    sensorID = ForeignKeyField(sensor, backref='values')
     value = FloatField()
-    timestamp = DateTimeField(default=datetime.datetime.now)
+    timestamp = DateTimeField()
 
     class Meta:
         database = database
