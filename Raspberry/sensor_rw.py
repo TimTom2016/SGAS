@@ -11,7 +11,7 @@ import server_pb2
 import grpc
 import RPi.GPIO as GPIO
 import board
-import adafruit_tsl2591
+from python_tsl2591 import tsl2591
 import database_orm as db
 
 # Configure logging
@@ -52,8 +52,8 @@ class SGASServiceServicer(server_pb2_grpc.sgas_serviceServicer):
 
     def get_supported_sensor_types (self, request, context):
         """ gRPC call handler for getting supported sensor types """
-        types=['TSl2591']
-        return server_pb2.supported_sensor_types(supported_sensor_types=types)
+        types=['TSL2591']
+        return server_pb2.supported_sensor_types_message(supported_sensor_types=types)
 
 def serve():
     """ Function to start the gRPC server """
@@ -77,7 +77,7 @@ class Sensors:
             GPIO.setup(int(self.pin), GPIO.IN)
         elif type == 'TSL2591':
             board.I2C()
-            self.sensor = adafruit_tsl2591.TSL2591()
+            self.sensor = tsl2591()
 
     def add_to_db(self, sensorId: None):
         """ Method to add sensor to the database """
@@ -102,7 +102,10 @@ class Sensors:
 
     def get_values_TSL2591(self):
         """ Method to get I2C sensor values """
-        return self.sensorId, self.senors.lux(), datetime.datetime.now()
+        full, ir = self.sensor.get_full_luminosity()  # Read raw values (full spectrum and infared spectrum).
+        lux = self.sensor.calculate_lux(full, ir)  # Convert raw values to Lux.
+        print(self.sensor.get_current())
+        return self.sensorId, lux, datetime.datetime.now()
 
     def remove_from_list(self):
         """ Method to remove sensor instance from sensorList """
