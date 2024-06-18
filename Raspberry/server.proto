@@ -4,6 +4,8 @@ package sgas;
 service sgas_service{
   rpc new_sensor_request(add_new_sensor_message) returns (done_message) {}
   rpc delete_sensor_request(delete_sensor_message) returns (done_message) {}
+  rpc discover_i2c_sensors(discover_i2c_sensors_message) returns (i2c_sensors_message) {}
+  rpc get_supported_sensor_types(get_supported_sensor_types_message) returns (supported_sensor_types_message) {}
 }
 
 message add_new_sensor_message{
@@ -20,4 +22,16 @@ message delete_sensor_message{
   int32 sensorId = 1;
 }
 
+message discover_i2c_sensors_message{
+}
 
+message i2c_sensors_message{
+  repeated string i2c_sensors = 1;
+}
+
+message get_supported_sensor_types_message{
+}
+
+message supported_sensor_types_message{
+  repeated string supported_sensor_types = 1;
+}
