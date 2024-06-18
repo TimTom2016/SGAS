@@ -122,6 +122,10 @@ pub async fn get_data(id: u32) -> Result<GraphDefinition,ServerFnError::<String>
 	use crate::auth::get_user;
     let user = get_user().await.unwrap();
     let db: crate::db::database::Database = expect_context::<AppState>().db;
+    if user.is_none() {
+        return Err(ServerFnError::ServerError::<String>("Not Authenticated".to_string()));
+
+    }
 	let graph = sqlx::query!("SELECT * FROM graph WHERE id=?",id).fetch_one(db.get_pool()).await.unwrap();
     let can_see = sqlx::query!("SELECT * FROM canSee WHERE id=?",user.unwrap().id).fetch_optional(db.get_pool()).await.unwrap();
     if can_see.is_none() {

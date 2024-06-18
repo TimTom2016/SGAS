@@ -8,3 +8,5 @@ pub mod edit_favorite;
 pub mod sensor_table;
 pub mod paginator;
 pub mod page_link;
+pub mod add_sensor;
+pub mod not_logged_in_home;

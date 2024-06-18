@@ -7,12 +7,13 @@ use leptos_router::*;
 use leptos_toaster::{Toast, ToastId, ToastOptions, Toasts, ToastVariant,Theme};
 use crate::components::header::Header;
 use crate::components::favorite::{Favorite,AddFavorite,EmptyFavorite};
+use crate::components::not_logged_in_home::NotLoggedInHomePage;
 #[component]
 pub fn Home() -> impl IntoView {
 	provide_meta_context();
 	//let toast_context = expect_context::<Toasts>();
 	let result = create_resource(|| {}, |_| async move {
-		get_favorites().await.unwrap()
+		get_favorites().await
 	});
 	// let create_toast = move |_| {
 	// 	spawn_local(async move {
@@ -41,31 +42,41 @@ pub fn Home() -> impl IntoView {
 	// };
 	let reload = store_value(move || result.refetch());
 	view! {
-		<div class="d-flex flex-column">
+		<div class="d-flex flex-column flex-fill">
 			<Header/>
 			<Suspense>
-				<For
-				each=move || result.get().unwrap_or_default().clone().into_iter().enumerate()
-				key=move |data| data.0.clone()
-				let:y>
-					<div class="d-flex flex-column m-4">
-						<div class="d-flex flew-row justify-content-between flex-wrap">
-							<For
-							each=move || y.1.clone().into_iter().enumerate()
-							key=move |data| data.0.clone()
-							let:x>
-								{ move || if x.1 >= 0 {
-									view!{<Favorite id=x.1 as u32 x=x.0 as u32 y=y.0 as u32 reload=reload.clone()/>}
-								} else {
-									view!{
-										<EmptyFavorite y=y.0 as u32 x=x.0 as u32 reload=reload.clone()/>
-									}
-								}}
-								
-							</For>
+				<Show
+				when=move || result.get().is_some()>
+				<Show
+				when=move || result.get().unwrap().is_ok()
+				fallback=move || view!{
+					<NotLoggedInHomePage/>
+				}>
+					<For
+					each=move || result.get().unwrap().unwrap_or_default().clone().into_iter().enumerate()
+					key=move |data| data.0.clone()
+					let:y>
+						<div class="d-flex flex-column m-4">
+							<div class="d-flex flew-row justify-content-between flex-wrap">
+								<For
+								each=move || y.1.clone().into_iter().enumerate()
+								key=move |data| data.0.clone()
+								let:x>
+									{ move || if x.1 >= 0 {
+										view!{<Favorite id=x.1 as u32 x=x.0 as u32 y=y.0 as u32 reload=reload.clone()/>}
+									} else {
+										view!{
+											<EmptyFavorite y=y.0 as u32 x=x.0 as u32 reload=reload.clone()/>
+										}
+									}}
+									
+								</For>
+							</div>
 						</div>
-					</div>
-				</For>
+					</For>
+				</Show>
+				
+				</Show>
 			</Suspense>
 		</div>
     }

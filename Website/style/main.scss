@@ -48,3 +48,22 @@ main {
 .caret-off::after {
     display: none !important;
 }
+
+
+.willkommen {
+    font-family: 'Playwrite GB J';
+    font-size: 82px;
+}
+
+.willkommen-2 {
+    font-family: 'Playwrite GB J';
+    font-size: 40px;
+}
+
+
+[data-bs-theme=dark] .gradient-back {
+    background-image: linear-gradient(45deg, rgb(65, 3, 76), rgb(145, 140, 0));
+}
+[data-bs-theme=light] .gradient-back {
+    background-image: linear-gradient(45deg, rgb(188, 6, 220), rgb(201, 208, 0));
+}

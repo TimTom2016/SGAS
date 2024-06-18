@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "ssr")]
 use sqlx::{FromRow,QueryBuilder};
 use crate::components::paginator::Paginator;
+use crate::components::add_sensor::AddSensorButton;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SensorQuery {
@@ -92,7 +93,12 @@ pub fn SensorTable() -> impl IntoView {
             }
 			/>
         </table>
-		<Paginator pagination_controller />
+		<div class="d-flex flex-row">
+			<Paginator pagination_controller />
+			<div class="ms-auto">
+				<AddSensorButton/>
+			</div>
+		</div>
     };
 }
 

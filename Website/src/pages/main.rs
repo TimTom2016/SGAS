@@ -13,6 +13,7 @@ pub fn App() -> impl IntoView {
 	provide_meta_context();
 	let is_dark_preferred = signal_throttled(use_preferred_dark(), 1000.0);
 	let theme= create_rw_signal(Theme::dark());
+	
 	create_effect(move |_| 
 	{
 		if is_dark_preferred.get() {
@@ -27,6 +28,9 @@ pub fn App() -> impl IntoView {
 	view! {
         <Stylesheet href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
         <Stylesheet id="leptos" href="/pkg/sgas.css"/>
+		<link rel="preconnect" href="https://fonts.googleapis.com"/>
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+		<Stylesheet href="https://fonts.googleapis.com/css2?family=Playwrite+GB+J:ital,wght@0,100..400;1,100..400&display=swap"/>
         // <script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.6.0"></script>
         // <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.1"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
@@ -34,7 +38,7 @@ pub fn App() -> impl IntoView {
         <script src="https://cdn.jsdelivr.net/npm/echarts-gl@2.0.9/dist/echarts-gl.min.js"></script>
         <Router>
 			<ThemeProvider theme=theme>
-				<main class="min-vh-100">
+				<main class="min-vh-100 d-flex  gradient-back">
 					//<Toaster position=ToasterPosition::BottomCenter>
 						<Routes>
 							<Route path="/" view=Home/>
