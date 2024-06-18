@@ -49,6 +49,16 @@ class sgas_serviceStub(object):
                 request_serializer=server__pb2.delete_sensor_message.SerializeToString,
                 response_deserializer=server__pb2.done_message.FromString,
                 _registered_method=True)
+        self.discover_i2c_sensors = channel.unary_unary(
+                '/sgas.sgas_service/discover_i2c_sensors',
+                request_serializer=server__pb2.discover_i2c_sensors_message.SerializeToString,
+                response_deserializer=server__pb2.i2c_sensors_message.FromString,
+                _registered_method=True)
+        self.get_supported_sensor_types = channel.unary_unary(
+                '/sgas.sgas_service/get_supported_sensor_types',
+                request_serializer=server__pb2.get_supported_sensor_types_message.SerializeToString,
+                response_deserializer=server__pb2.supported_sensor_types_message.FromString,
+                _registered_method=True)
 
 
 class sgas_serviceServicer(object):
@@ -66,6 +76,18 @@ class sgas_serviceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def discover_i2c_sensors(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def get_supported_sensor_types(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_sgas_serviceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -78,6 +100,16 @@ def add_sgas_serviceServicer_to_server(servicer, server):
                     servicer.delete_sensor_request,
                     request_deserializer=server__pb2.delete_sensor_message.FromString,
                     response_serializer=server__pb2.done_message.SerializeToString,
+            ),
+            'discover_i2c_sensors': grpc.unary_unary_rpc_method_handler(
+                    servicer.discover_i2c_sensors,
+                    request_deserializer=server__pb2.discover_i2c_sensors_message.FromString,
+                    response_serializer=server__pb2.i2c_sensors_message.SerializeToString,
+            ),
+            'get_supported_sensor_types': grpc.unary_unary_rpc_method_handler(
+                    servicer.get_supported_sensor_types,
+                    request_deserializer=server__pb2.get_supported_sensor_types_message.FromString,
+                    response_serializer=server__pb2.supported_sensor_types_message.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -134,6 +166,60 @@ class sgas_service(object):
             '/sgas.sgas_service/delete_sensor_request',
             server__pb2.delete_sensor_message.SerializeToString,
             server__pb2.done_message.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def discover_i2c_sensors(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/sgas.sgas_service/discover_i2c_sensors',
+            server__pb2.discover_i2c_sensors_message.SerializeToString,
+            server__pb2.i2c_sensors_message.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def get_supported_sensor_types(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/sgas.sgas_service/get_supported_sensor_types',
+            server__pb2.get_supported_sensor_types_message.SerializeToString,
+            server__pb2.supported_sensor_types_message.FromString,
             options,
             channel_credentials,
             insecure,

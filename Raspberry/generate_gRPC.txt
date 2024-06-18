@@ -1,1 +1,1 @@
-C:\Users\domin\AppData\Local\Programs\Python\Python312\python.exe -m grpc_tools.protoc --proto_path=./gRPC --python_out=./gRPC --grpc_python_out=./gRPC ./gRPC/server.proto
+C:\Users\domin\AppData\Local\Programs\Python\Python312\python.exe -m grpc_tools.protoc --proto_path=./Raspberry --python_out=./Raspberry --grpc_python_out=./Raspberry ./Raspberry/server.proto
