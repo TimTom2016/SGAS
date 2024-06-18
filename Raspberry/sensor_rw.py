@@ -48,6 +48,11 @@ class SGASServiceServicer(server_pb2_grpc.sgas_serviceServicer):
             logging.error(f"Failed to delete sensor with ID {_sensorId}: {error}")
         return server_pb2.done_message()
 
+    def get_supported_sensor_types (self, request, context):
+        """ gRPC call handler for getting supported sensor types """
+        types=['GPIO', 'DHT22']
+        return server_pb2.supported_sensor_types(supported_sensor_types=types)
+
 def serve():
     """ Function to start the gRPC server """
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
