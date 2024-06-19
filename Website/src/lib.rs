@@ -6,6 +6,7 @@ pub mod shared;
 pub mod db;
 #[cfg(feature = "ssr")]
 pub mod domain;
+pub mod grpc;
 pub mod auth;
 
 #[wasm_bindgen::prelude::wasm_bindgen]

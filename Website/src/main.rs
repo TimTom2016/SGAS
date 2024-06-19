@@ -1,12 +1,17 @@
 #![feature(associated_type_defaults)]
+#![feature(async_closure)]
+#![feature(fn_traits)]
 mod shared;
 mod pages;
 mod components;
+mod grpc;
+use std::time::Duration;
 
 pub use cfg_if::cfg_if;
 use dotenvy::var;
 
 cfg_if! { if #[cfg(feature = "ssr")] {
+
     mod auth;
     use crate::db::repositories::user::UserRepository;
     use crate::db::database::Database;
@@ -31,6 +36,8 @@ cfg_if! { if #[cfg(feature = "ssr")] {
     pub mod fileserv;
     use crate::auth::ssr::AuthSession;
     use dotenvy::dotenv;
+    use tokio::time::sleep;
+    use crate::grpc::ssr::sgas::sgas_service_client::SgasServiceClient;
     async fn leptos_routes_handler(State(app_state): State<AppState>,
     auth_session: AuthSession, req: Request) -> AxumResponse {
         let handler = leptos_axum::render_route_with_context(
@@ -95,7 +102,6 @@ cfg_if! { if #[cfg(feature = "ssr")] {
         leptos_options.site_addr = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(0,0,0,0), 3000));
         let addr = leptos_options.site_addr;
 
-
         let routes = generate_route_list(App);
         let db = db.unwrap();
         let session_config = SessionConfig::default().with_table_name("axum_sessions").with_lifetime(chrono::Duration::days(7));
@@ -106,12 +112,26 @@ cfg_if! { if #[cfg(feature = "ssr")] {
         )
         .await
         .unwrap();
+        
+        let grpc_string = match var("GRPC_SERVER") {
+            Ok(data) => data,
+            Err(_) => return,
+        };
+
+
+        let mut grpc = SgasServiceClient::connect(grpc_string.clone()).await;
+        while grpc.is_err() {
+            grpc = SgasServiceClient::connect(grpc_string.clone()).await;
+            sleep(Duration::from_secs(5)).await;
+        }
         let state = AppState {
             options: leptos_options,
             repos: repos.clone(),
             routes: routes.clone(),
             db: db.clone(),
+            grpc: grpc.unwrap(),
         };
+
         let app = Router::new()
         .route("/api/*fn_name", post(server_fn_handler))
         .leptos_routes_with_handler(routes, get(leptos_routes_handler))
