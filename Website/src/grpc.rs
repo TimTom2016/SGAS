@@ -2,7 +2,6 @@
 use leptos::*;
 #[cfg(feature="ssr")]
 pub mod ssr {
-    use sgas::DoneMessage;
     pub mod sgas {
         tonic::include_proto!("sgas");
     }
@@ -56,6 +55,21 @@ pub async fn delete_sensor(id: i32) -> Result<(),ServerFnError<String>>
 	grpc.delete_sensor_request(request).await.map_err(|e| ServerFnError::WrappedServerError(e.to_string()))?;
 	Ok(())
 }
+
+
+#[server]
+pub async fn get_supported_sensor_types() -> Result<Vec<String>,ServerFnError<String>>
+{
+	use crate::shared::app_state::AppState;
+	use tonic::Request;
+	use crate::grpc::ssr::sgas;
+	let mut grpc = use_context::<AppState>().unwrap().grpc;
+	let request = Request::new(sgas::GetSupportedSensorTypesMessage {
+	});
+	Ok(grpc.get_supported_sensor_types(request).await.map_err(|e| ServerFnError::WrappedServerError(e.to_string()))?.into_inner().supported_sensor_types)
+}
+
+
 
 
 #[server]

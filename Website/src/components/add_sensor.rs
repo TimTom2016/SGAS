@@ -9,6 +9,8 @@ use leptos_router::*;
 use num_traits::{FromPrimitive, ToPrimitive};
 use thaw::*;
 
+use crate::grpc::{get_supported_sensor_types};
+
 #[component]
 pub fn AddSensor() -> impl IntoView {
     let mut got_triggered = create_rw_signal(false);
@@ -23,38 +25,44 @@ pub fn AddSensor() -> impl IntoView {
         }
         got_triggered.set(true);
     };
+    let i2c = create_resource(
+        || (), |_| {
+            async  move {
+                let sensor_types =  get_supported_sensor_types().await.unwrap_or(vec![]);
+                sensor_types
+            }
+        });
     let action = create_server_action::<AddSensor>();
     view!{
-        <ActionForm action=action on:submit=on_submit>
-            <div class="mb-3">
-                <label for="NameInput" class="form-label">Name</label>
-                <input type="text" class="form-control" id="NameInput" aria-describedby="NameHelp" name="name"/>
-                <div id="NameHelp" class="form-text">This is the Name that the Graph will have</div>
-            </div>
-            <div class="mb-3">
-                <select class="form-select" aria-label="Select an graph" name="sensor_type">
-                    <option selected value="">Select an Sensor Type</option>
-                    <For
-                    each=move || ["Dht22","Temp"].iter()
-                    key=move |data| data.to_string()
-                    let:data
-                    > 
-                        <option value=data.to_string()> {data.to_string()} </option>
-                    </For>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="PinInput" class="form-label">Pin</label>
-                <input type="text" class="form-control" id="PinInput" aria-describedby="PinHelp" name="pin"/>
-                <div id="PinHelp" class="form-text">"If you use an GPIO Sensor you don't need to fill in the Address field"</div>
-            </div>
-            <div class="mb-3">
-                <label for="AddrInput" class="form-label">Address</label>
-                <input type="text" class="form-control" id="AddrInput" aria-describedby="AddrHelp" name="addr"/>
-                <div id="AddrHelp" class="form-text">"This is your I²C Address, if you use an I²C Sensor"</div>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </ActionForm>
+        <Suspense>
+            <ActionForm action=action on:submit=on_submit>
+                <div class="mb-3">
+                    <label for="NameInput" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="NameInput" aria-describedby="NameHelp" name="name"/>
+                    <div id="NameHelp" class="form-text">This is the Name that the Graph will have</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="PinInput" class="form-label">Pin</label>
+                    <input type="text" class="form-control" id="PinInput" aria-describedby="PinHelp" name="pin"/>
+                    <div id="PinHelp" class="form-text">"If you use an GPIO Sensor you don't need to select an Sensor Type"</div>
+                </div>
+                <div class="mb-3 d-flex align-items-center">
+                    <select class="form-select" aria-label="Select an Sensor Type" name="sensor_type">
+                        <option selected value="GPIO">Select an Sensor Type</option>
+                        <For
+                        each=move || i2c.get().unwrap_or(vec![])
+                        key=move |data| data.to_string()
+                        let:data
+                        > 
+                            <option value=data.to_string()> {data.to_string()} </option>
+                        </For>
+                    </select>
+                </div>
+                <input type="hidden" name="addr" value=""/>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </ActionForm>
+        </Suspense>
     }
 }
 
@@ -65,7 +73,7 @@ pub async fn add_sensor(name: String, sensor_type: String, pin: String, addr: St
     if !addr.is_empty() && !pin.is_empty() {
         return Err(ServerFnError::ServerError("Invalid pin and addr can't have data".to_string()));
     }
-    if !addr.is_empty() {
+    if !(sensor_type=="GPIO") {
         return add_new_sensor_addr(name, sensor_type, addr).await;
     } else {
         return add_new_sensor_pin(name, sensor_type, pin.parse::<i32>().unwrap()).await;

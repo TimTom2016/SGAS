@@ -112,10 +112,12 @@ cfg_if! { if #[cfg(feature = "ssr")] {
         )
         .await
         .unwrap();
+        
         let grpc_string = match var("GRPC_SERVER") {
             Ok(data) => data,
             Err(_) => return,
         };
+
 
         let mut grpc = SgasServiceClient::connect(grpc_string.clone()).await;
         while grpc.is_err() {
@@ -129,6 +131,7 @@ cfg_if! { if #[cfg(feature = "ssr")] {
             db: db.clone(),
             grpc: grpc.unwrap(),
         };
+
         let app = Router::new()
         .route("/api/*fn_name", post(server_fn_handler))
         .leptos_routes_with_handler(routes, get(leptos_routes_handler))
