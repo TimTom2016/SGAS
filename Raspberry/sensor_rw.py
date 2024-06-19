@@ -4,12 +4,14 @@ import threading
 import logging
 from concurrent import futures
 from typing import Optional
-
-import grpc
-import RPi.GPIO as GPIO
 import server_pb2_grpc
 import server_pb2
 
+
+import grpc
+import RPi.GPIO as GPIO
+import board
+from python_tsl2591 import tsl2591
 import database_orm as db
 
 # Configure logging
@@ -48,6 +50,11 @@ class SGASServiceServicer(server_pb2_grpc.sgas_serviceServicer):
             logging.error(f"Failed to delete sensor with ID {_sensorId}: {error}")
         return server_pb2.done_message()
 
+    def get_supported_sensor_types (self, request, context):
+        """ gRPC call handler for getting supported sensor types """
+        types=['TSL2591']
+        return server_pb2.supported_sensor_types_message(supported_sensor_types=types)
+
 def serve():
     """ Function to start the gRPC server """
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
@@ -57,16 +64,20 @@ def serve():
     return server
 
 class Sensors:
-    def __init__(self, name: str, pin: int, sensorId: None, type: str = 'GPIO', addr: str = ''):
+    def __init__(self, name: str, pin: int, sensorId: None, type: str = 'GPIO', addr: str = '', ParentsensorList=sensorList):
         """ Sensor class for managing sensor instances """
         self.name = name
         self.pin = pin
         self.type = type
         self.addr = addr
-        sensorList.append(self)
+        ParentsensorList.append(self)
         self.sensorId = self.add_to_db(sensorId)
+
         if type == 'GPIO':
             GPIO.setup(int(self.pin), GPIO.IN)
+        elif type == 'TSL2591':
+            board.I2C()
+            self.sensor = tsl2591()
 
     def add_to_db(self, sensorId: None):
         """ Method to add sensor to the database """
@@ -89,9 +100,12 @@ class Sensors:
         """ Method to get GPIO sensor values """
         return self.sensorId, GPIO.input(int(self.pin)), datetime.datetime.now()
 
-    def get_values_i2c(self):
+    def get_values_TSL2591(self):
         """ Method to get I2C sensor values """
-        return self.sensorId, GPIO.input(int(self.pin)), datetime.datetime.now()
+        full, ir = self.sensor.get_full_luminosity()  # Read raw values (full spectrum and infared spectrum).
+        lux = self.sensor.calculate_lux(full, ir)  # Convert raw values to Lux.
+        print(self.sensor.get_current())
+        return self.sensorId, lux, datetime.datetime.now()
 
     def remove_from_list(self):
         """ Method to remove sensor instance from sensorList """
@@ -105,8 +119,8 @@ def update_sensors_to_db():
     for item in sensorList:
         if item.get_type() == 'GPIO':
             info = item.get_values_GPIO()
-        elif item.get_type() == 'i2c':
-            info = item.get_values_i2c()
+        elif item.get_type() == 'TSL2591':
+            info = item.get_values_TSL2591()
         else:
             # Add functionality for receiving data from IP sources if needed
             continue

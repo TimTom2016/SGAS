@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cserver.proto\x12\x04sgas\"j\n\x16\x61\x64\x64_new_sensor_message\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04type\x18\x02 \x01(\t\x12\x10\n\x03pin\x18\x03 \x01(\x05H\x00\x88\x01\x01\x12\x11\n\x04\x61\x64\x64r\x18\x04 \x01(\tH\x01\x88\x01\x01\x42\x06\n\x04_pinB\x07\n\x05_addr\"\x0e\n\x0c\x64one_message\")\n\x15\x64\x65lete_sensor_message\x12\x10\n\x08sensorId\x18\x01 \x01(\x05\"\x1e\n\x1c\x64iscover_i2c_sensors_message\"*\n\x13i2c_sensors_message\x12\x13\n\x0bi2c_sensors\x18\x01 \x03(\t\"$\n\"get_supported_sensor_types_message\"@\n\x1esupported_sensor_types_message\x12\x1e\n\x16supported_sensor_types\x18\x01 \x03(\t2\xed\x02\n\x0csgas_service\x12H\n\x12new_sensor_request\x12\x1c.sgas.add_new_sensor_message\x1a\x12.sgas.done_message\"\x00\x12J\n\x15\x64\x65lete_sensor_request\x12\x1b.sgas.delete_sensor_message\x1a\x12.sgas.done_message\"\x00\x12W\n\x14\x64iscover_i2c_sensors\x12\".sgas.discover_i2c_sensors_message\x1a\x19.sgas.i2c_sensors_message\"\x00\x12n\n\x1aget_supported_sensor_types\x12(.sgas.get_supported_sensor_types_message\x1a$.sgas.supported_sensor_types_message\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cserver.proto\x12\x04sgas\"j\n\x16\x61\x64\x64_new_sensor_message\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04type\x18\x02 \x01(\t\x12\x10\n\x03pin\x18\x03 \x01(\x05H\x00\x88\x01\x01\x12\x11\n\x04\x61\x64\x64r\x18\x04 \x01(\tH\x01\x88\x01\x01\x42\x06\n\x04_pinB\x07\n\x05_addr\"\x0e\n\x0c\x64one_message\")\n\x15\x64\x65lete_sensor_message\x12\x10\n\x08sensorId\x18\x01 \x01(\x05\"$\n\"get_supported_sensor_types_message\"@\n\x1esupported_sensor_types_message\x12\x1e\n\x16supported_sensor_types\x18\x01 \x03(\t2\x94\x02\n\x0csgas_service\x12H\n\x12new_sensor_request\x12\x1c.sgas.add_new_sensor_message\x1a\x12.sgas.done_message\"\x00\x12J\n\x15\x64\x65lete_sensor_request\x12\x1b.sgas.delete_sensor_message\x1a\x12.sgas.done_message\"\x00\x12n\n\x1aget_supported_sensor_types\x12(.sgas.get_supported_sensor_types_message\x1a$.sgas.supported_sensor_types_message\"\x00\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -27,14 +27,10 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_DONE_MESSAGE']._serialized_end=144
   _globals['_DELETE_SENSOR_MESSAGE']._serialized_start=146
   _globals['_DELETE_SENSOR_MESSAGE']._serialized_end=187
-  _globals['_DISCOVER_I2C_SENSORS_MESSAGE']._serialized_start=189
-  _globals['_DISCOVER_I2C_SENSORS_MESSAGE']._serialized_end=219
-  _globals['_I2C_SENSORS_MESSAGE']._serialized_start=221
-  _globals['_I2C_SENSORS_MESSAGE']._serialized_end=263
-  _globals['_GET_SUPPORTED_SENSOR_TYPES_MESSAGE']._serialized_start=265
-  _globals['_GET_SUPPORTED_SENSOR_TYPES_MESSAGE']._serialized_end=301
-  _globals['_SUPPORTED_SENSOR_TYPES_MESSAGE']._serialized_start=303
-  _globals['_SUPPORTED_SENSOR_TYPES_MESSAGE']._serialized_end=367
-  _globals['_SGAS_SERVICE']._serialized_start=370
-  _globals['_SGAS_SERVICE']._serialized_end=735
+  _globals['_GET_SUPPORTED_SENSOR_TYPES_MESSAGE']._serialized_start=189
+  _globals['_GET_SUPPORTED_SENSOR_TYPES_MESSAGE']._serialized_end=225
+  _globals['_SUPPORTED_SENSOR_TYPES_MESSAGE']._serialized_start=227
+  _globals['_SUPPORTED_SENSOR_TYPES_MESSAGE']._serialized_end=291
+  _globals['_SGAS_SERVICE']._serialized_start=294
+  _globals['_SGAS_SERVICE']._serialized_end=570
 # @@protoc_insertion_point(module_scope)
