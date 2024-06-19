@@ -104,7 +104,6 @@ class Sensors:
         """ Method to get I2C sensor values """
         full, ir = self.sensor.get_full_luminosity()  # Read raw values (full spectrum and infared spectrum).
         lux = self.sensor.calculate_lux(full, ir)  # Convert raw values to Lux.
-        print(self.sensor.get_current())
         return self.sensorId, lux, datetime.datetime.now()
 
     def remove_from_list(self):
